@@ -153,28 +153,33 @@
     }
 
     function generatePDF() {
-      const breakdownList = document.querySelector('#breakdown ul');
-      if (!breakdownList) {
-        alert('先に「運賃を計算する」を実行してください。');
-        return;
-      }
-      const tableHTML = Array.from(breakdownList.children).map(item => `<tr><td>${item.innerText}</td></tr>`).join('');
-      const finalRow = `<tr><td><strong>` + document.getElementById("result").innerText + `</strong></td></tr>`;
-      const fullTable = `<tr><th>内訳明細</th></tr>` + tableHTML + finalRow;
-      document.getElementById("invoice-table").innerHTML = fullTable;
-      document.getElementById("invoice-table-copy").innerHTML = fullTable;
-      const element = document.getElementById("invoice");
-      element.style.display = "block";
-      html2pdf().set({
-        margin: 10,
-        filename: '福祉タクシー請求書_領収書.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).from(element).save().then(() => {
-        element.style.display = "none";
-      });
-    }
+  const breakdownList = document.querySelector('#breakdown ul');
+  if (!breakdownList) {
+    alert('先に「運賃を計算する」を実行してください。');
+    return;
+  }
+
+  const tableHTML = Array.from(breakdownList.children).map(item => `<tr><td>${item.innerText}</td></tr>`).join('');
+  const distanceRow = `<tr><td><strong>距離：${distanceKmGlobal.toFixed(2)} km</strong></td></tr>`;
+  const finalRow = `<tr><td><strong>` + document.getElementById("result").innerText + `</strong></td></tr>`;
+  const fullTable = `<tr><th>内訳明細</th></tr>` + distanceRow + tableHTML + finalRow;
+
+  document.getElementById("invoice-table").innerHTML = fullTable;
+  document.getElementById("invoice-table-copy").innerHTML = fullTable;
+
+  const element = document.getElementById("invoice");
+  element.style.display = "block";
+
+  html2pdf().set({
+    margin: 10,
+    filename: '福祉タクシー請求書_領収書.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).from(element).save().then(() => {
+    element.style.display = "none";
+  });
+}
   </script>
 </body>
 </html>
