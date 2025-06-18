@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -154,9 +155,10 @@
         alert('先に「運賃を計算する」を実行してください。');
         return;
       }
+      const distanceInfo = document.getElementById("details").innerText;
       const tableHTML = Array.from(breakdownList.children).map(item => `<tr><td>${item.innerText}</td></tr>`).join('');
       const finalRow = `<tr><td><strong>` + document.getElementById("result").innerText + `</strong></td></tr>`;
-      const fullTable = `<tr><th>内訳明細</th></tr>` + tableHTML + finalRow;
+      const fullTable = `<tr><th>内訳明細</th></tr><tr><td>${distanceInfo}</td></tr>` + tableHTML + finalRow;
       document.getElementById("invoice-table").innerHTML = fullTable;
       document.getElementById("invoice-table-copy").innerHTML = fullTable;
       const element = document.getElementById("invoice");
