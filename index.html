@@ -16,6 +16,7 @@
     .invoice-block { border: 1px solid #000; padding: 10px; margin-bottom: 20px; }
     .invoice-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
     .invoice-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+    .stamp-box { border: 1px solid #000; width: 100px; height: 80px; text-align: center; line-height: 80px; float: right; margin-top: 10px; }
     .invoice-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     .invoice-table th, .invoice-table td { border: 1px solid #000; padding: 6px; text-align: left; }
     .invoice-footer { margin-top: 10px; }
@@ -60,7 +61,6 @@
   <div id="details"></div>
   <div id="breakdown"></div>
   <button onclick="generatePDF()">PDFを出力する</button>
-
   <div id="invoice" style="display:none;">
     <div class="invoice-block">
       <div class="invoice-title">福祉タクシー利用料（請 求 書）</div>
@@ -69,13 +69,10 @@
         <div>発行日：________年____月____日</div>
       </div>
       <div>車種：__________________________</div>
-      <div style="display: flex; justify-content: space-between;">
-        <div>発行元：一般社団法人NURTURES　みみの家</div>
-        <div>印</div>
-      </div>
+      <div>発行元：一般社団法人NURTURES　みみの家</div>
       <table class="invoice-table" id="invoice-table"></table>
+      <div class="stamp-box">運転者印</div>
     </div>
-
     <div class="invoice-block">
       <div class="invoice-title">福祉タクシー利用料（領 収 書）</div>
       <div class="invoice-header">
@@ -83,29 +80,23 @@
         <div>発行日：________年____月____日</div>
       </div>
       <div>車種：__________________________</div>
-      <div style="display: flex; justify-content: space-between;">
-        <div>発行元：一般社団法人NURTURES　みみの家</div>
-        <div>印</div>
-      </div>
+      <div>発行元：一般社団法人NURTURES　みみの家</div>
       <table class="invoice-table" id="invoice-table-copy"></table>
+      <div class="stamp-box">運転者印</div>
     </div>
   </div>
 
   <script>
-    let distanceKmGlobal = 0;
-
     function calculateFare() {
       const distanceKm = parseFloat(document.getElementById("distanceInput").value);
       const timeStr = document.getElementById("rideTime").value;
-      const [hour] = timeStr.split(":").map(Number);
+      const [hour] = timeStr.split(":" ).map(Number);
       const isNight = (hour >= 22 || hour < 5);
 
       if (isNaN(distanceKm) || distanceKm <= 0) {
         document.getElementById("result").innerHTML = "距離を正しく入力してください。";
         return;
       }
-
-      distanceKmGlobal = distanceKm;
 
       let fare = 341;
       let breakdown = ["距離基本運賃：¥341"];
@@ -163,18 +154,13 @@
         alert('先に「運賃を計算する」を実行してください。');
         return;
       }
-
       const tableHTML = Array.from(breakdownList.children).map(item => `<tr><td>${item.innerText}</td></tr>`).join('');
-      const distanceRow = `<tr><td><strong>距離：${distanceKmGlobal.toFixed(2)} km</strong></td></tr>`;
       const finalRow = `<tr><td><strong>` + document.getElementById("result").innerText + `</strong></td></tr>`;
-      const fullTable = `<tr><th>内訳明細</th></tr>` + distanceRow + tableHTML + finalRow;
-
+      const fullTable = `<tr><th>内訳明細</th></tr>` + tableHTML + finalRow;
       document.getElementById("invoice-table").innerHTML = fullTable;
       document.getElementById("invoice-table-copy").innerHTML = fullTable;
-
       const element = document.getElementById("invoice");
       element.style.display = "block";
-
       html2pdf().set({
         margin: 10,
         filename: '福祉タクシー請求書_領収書.pdf',
